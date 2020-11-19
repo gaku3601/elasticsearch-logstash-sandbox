@@ -7,8 +7,15 @@ input {
     jdbc_user => "user"
     jdbc_password => "password"
     jdbc_default_timezone => "Asia/Tokyo"
-    schedule => "*/5 * * * * *"
+    schedule => "*/5 * * * * *" # ポーリングタイミングを指定
     statement => "SELECT * FROM city"
+  }
+}
+
+filter {
+  mutate {
+    copy => { "account_id" => "[@metadata][_id]"} # ここでidをcopy
+    remove_field => ["id", "@version", "unix_ts_in_secs"] # elasticsearch上の不要情報の削除
   }
 }
 
@@ -16,5 +23,6 @@ output {
   elasticsearch {
     hosts => ["elasticsearch"]
     index => "city"
+    document_id => "%{[@metadata][_id]}" # document_idをテーブルのidと一致させる
   }
 }

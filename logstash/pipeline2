@@ -12,9 +12,17 @@ input {
   }
 }
 
+filter {
+  mutate {
+    copy => { "account_id" => "[@metadata][_id]"}
+    remove_field => ["id", "@version", "unix_ts_in_secs"]
+  }
+}
+
 output {
   elasticsearch {
     hosts => ["elasticsearch"]
     index => "city2"
+    document_id => "%{[@metadata][_id]}"
   }
 }
