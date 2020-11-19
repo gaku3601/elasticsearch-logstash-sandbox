@@ -8,13 +8,13 @@ input {
     jdbc_password => "password"
     jdbc_default_timezone => "Asia/Tokyo"
     schedule => "*/5 * * * * *"
-    statement => "SELECT * FROM city"
+    statement => "SELECT * FROM city2"
   }
 }
 
 output {
   elasticsearch {
     hosts => ["elasticsearch"]
-    index => "city"
+    index => "city2"
   }
 }
