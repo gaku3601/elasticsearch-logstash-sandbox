@@ -1,8 +1,12 @@
-- pipeline.id: pipeline1
+- pipeline.id: tenant
   pipeline.batch.size: 125
   path.config: "/usr/share/logstash/pipeline"
   pipeline.workers: 1
-- pipeline.id: pipeline2
+- pipeline.id: card
   pipeline.batch.size: 125
   path.config: "/usr/share/logstash/pipeline2"
+  pipeline.workers: 1
+- pipeline.id: profile
+  pipeline.batch.size: 125
+  path.config: "/usr/share/logstash/pipeline3"
   pipeline.workers: 1

@@ -3,26 +3,36 @@ input {
     jdbc_driver_library => "/usr/share/java/postgresql-jdbc.jar"
     jdbc_driver_class => "org.postgresql.Driver"
     jdbc_connection_string => "jdbc:postgresql://db:5432/database"
-    jdbc_default_timezone => "Asia/Tokyo"
     jdbc_user => "user"
     jdbc_password => "password"
     jdbc_default_timezone => "Asia/Tokyo"
-    schedule => "*/5 * * * * *" # ポーリングタイミングを指定
-    statement => "SELECT * FROM city"
+    schedule => "*/5 * * * * *" # 同期タイミングを指定
+    statement => "SELECT * FROM tenant"
   }
 }
 
 filter {
   mutate {
-    copy => { "account_id" => "[@metadata][_id]"} # ここでidをcopy
+    copy => { "tenant_id" => "[@metadata][_id]"} # ここでidをcopy
     remove_field => ["id", "@version", "unix_ts_in_secs"] # elasticsearch上の不要情報の削除
+  }
+
+  jdbc_streaming {
+    jdbc_driver_library => "/usr/share/java/postgresql-jdbc.jar"
+    jdbc_driver_class => "org.postgresql.Driver"
+    jdbc_connection_string => "jdbc:postgresql://db:5432/database"
+    jdbc_user => "user"
+    jdbc_password => "password"
+    statement => "select * from card left join profile on card.card_id = profile.card_id WHERE card.tenant_id = :tenant_id"
+    parameters => {"tenant_id" => "tenant_id"}
+    target => "cards"
   }
 }
 
 output {
   elasticsearch {
     hosts => ["elasticsearch"]
-    index => "city"
-    document_id => "%{[@metadata][_id]}" # document_idをテーブルのidと一致させる
+    index => "searchlist"
+    document_id => "searchlist-%{[@metadata][_id]}" # document_idをテーブルのidと一致させる
   }
 }

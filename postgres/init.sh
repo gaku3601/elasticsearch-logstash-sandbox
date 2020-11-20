@@ -1,19 +1,30 @@
 set -e
 psql -U user -d database << EOSQL
-CREATE TABLE city(
-  account_id        SERIAL PRIMARY KEY,
-  account_name      VARCHAR(20),
-  email             VARCHAR(100),
-  password    CHAR(64)
+CREATE TABLE tenant(
+  tenant_id        SERIAL PRIMARY KEY,
+  name             VARCHAR(100)
 );
-INSERT INTO city(account_id,account_name,email,password) VALUES(1,'name1','email@email.com','password');
-INSERT INTO city(account_id,account_name,email,password) VALUES(2,'name2','email@email.com','password');
-CREATE TABLE city2(
-  account_id        SERIAL PRIMARY KEY,
-  account_name      VARCHAR(20),
-  email             VARCHAR(100),
-  password    CHAR(64)
+INSERT INTO tenant(name) VALUES('gakus company');
+INSERT INTO tenant(name) VALUES('yamada company');
+INSERT INTO tenant(name) VALUES('hanako company');
+CREATE TABLE card(
+  card_id        SERIAL PRIMARY KEY,
+  tenant_id         INTEGER,
+  title             VARCHAR(20)
 );
-INSERT INTO city2(account_id,account_name,email,password) VALUES(1,'name1','email@email.com','password');
-INSERT INTO city2(account_id,account_name,email,password) VALUES(2,'name2','email@email.com','password');
+INSERT INTO card(tenant_id, title) VALUES(1,'card1');
+INSERT INTO card(tenant_id, title) VALUES(1,'card2');
+INSERT INTO card(tenant_id, title) VALUES(2,'card1');
+INSERT INTO card(tenant_id, title) VALUES(2,'card2');
+INSERT INTO card(tenant_id, title) VALUES(3,'card1');
+INSERT INTO card(tenant_id, title) VALUES(3,'card2');
+CREATE TABLE profile(
+  profile_id        SERIAL PRIMARY KEY,
+  card_id           INTEGER,
+  name              VARCHAR(100),
+  age               INTEGER
+);
+INSERT INTO profile(card_id, name, age) VALUES(1,'gaku', 30);
+INSERT INTO profile(card_id, name, age) VALUES(3,'yamada', 45);
+INSERT INTO profile(card_id, name, age) VALUES(5,'hanako', 70);
 EOSQL
